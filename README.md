@@ -1,7 +1,6 @@
 pSAscan - Parallel external memory suffix array construction
 ============================================================
 
-
 Description
 -----------
 
@@ -41,20 +40,20 @@ experimental evaluation, refer to the following paper.
 The latest version of pSAscan is available from
 https://github.com/dominikkempa/psascan.
 
-
+This repository contains an updated version with two goals:
+* Build using CMake
+* Alternatively do in-memory suffix array computation using [libsais](https://github.com/IlyaGrebnov/libsais)
 
 Compilation and usage
 ---------------------
+```
+git submodule update --init --recursive
+mkdir build; cd build
+cmake -DCMAKE_BUILD_TYPE=Release
+make
+```
 
-1. Download https://github.com/y-256/libdivsufsort/archive/2.0.1.tar.gz
-and install. Make sure to compile it to static 64-bit libraries. More
-detailed instructions on the (recommended) installation can be found
-in the doc/divsufsort-install-guide.txt file of this package.
-
-2. After installing libdivsufsort, pSAscan is compiled by simply
-typing `make` in the directory containing this README. This will build
-the pSAscan executable called `construct_sa`. For usage instructions,
-run the program without any arguments.
+This will build two binaries: `construct_sa` and `delete_sentinel_bytes`.
 
 ### Example
 
