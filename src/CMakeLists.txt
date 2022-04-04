@@ -1,3 +1,7 @@
 add_executable(construct_sa main.cpp utils.cpp)
-target_link_libraries(construct_sa divsufsort divsufsort64)
+if(USE_LIBSAIS)
+    target_link_libraries(construct_sa sais sais64)
+else()
+    target_link_libraries(construct_sa divsufsort divsufsort64)
+endif()
 set_target_properties(construct_sa PROPERTIES OUTPUT_NAME ${CMAKE_BINARY_DIR}/construct_sa)

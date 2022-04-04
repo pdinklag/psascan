@@ -1,3 +1,6 @@
 [submodule "extlib/libdivsufsort"]
 	path = extlib/libdivsufsort
 	url = https://github.com/y-256/libdivsufsort
+[submodule "extlib/libsais"]
+	path = extlib/libsais
+	url = https://github.com/IlyaGrebnov/libsais

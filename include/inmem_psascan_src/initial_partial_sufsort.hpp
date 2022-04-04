@@ -2,12 +2,13 @@
  * @file    src/psascan_src/inmem_psascan_src/initial_partial_sufsort.hpp
  * @section LICENCE
  *
- * This file is part of pSAscan v0.1.1
- * See: https://github.com/dominikkempa/psascan
+ * This file is part of a modified pSAscan
+ * See: https://github.com/pdinklag/psascan
  *
  * Copyright (C) 2014-2020
  *   Dominik Kempa <dominik.kempa (at) gmail.com>
  *   Juha Karkkainen <juha.karkkainen (at) cs.helsinki.fi>
+ *   Patrick Dinklage <patrick.dinklage (at) tu-dortmund.de>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -38,7 +39,13 @@
 #include <thread>
 
 #include "../bitvector.hpp"
-#include "divsufsort_template.hpp"
+
+#ifdef USE_LIBSAIS
+    #include "sais_template.hpp"    
+#else
+    #include "divsufsort_template.hpp"
+#endif
+
 #include "bwtsa.hpp"
 #include "parallel_shrink.hpp"
 #include "parallel_expand.hpp"
@@ -150,7 +157,11 @@ void initial_partial_sufsort(unsigned char *text, long text_length,
     //--------------------------------------------------------------------------
     // STEP 2: Compute suffix arrays in parallel.
     //--------------------------------------------------------------------------
+    #ifdef USE_LIBSAIS
+    fprintf(stderr, "  Running libsais in parallel: ");
+    #else
     fprintf(stderr, "  Running divsufsort32 in parallel: ");
+    #endif
     start = utils::wclock();
     std::thread **threads = new std::thread*[n_blocks];
     for (long i = 0; i < n_blocks; ++i) {
@@ -158,8 +169,13 @@ void initial_partial_sufsort(unsigned char *text, long text_length,
       long block_beg = std::max(0L, block_end - max_block_size);
       long block_size = block_end - block_beg;
 
-      threads[i] = new std::thread(run_divsufsort<int>,
-          text + block_beg, temp_sa + block_beg, block_size);
+      threads[i] = new std::thread(
+        #ifdef USE_LIBSAIS
+        run_sais<int>,
+        #else
+        run_divsufsort<int>,
+        #endif
+        text + block_beg, temp_sa + block_beg, block_size);
     }
 
     for (long i = 0; i < n_blocks; ++i) threads[i]->join();
@@ -247,7 +263,11 @@ void initial_partial_sufsort(unsigned char *text, long text_length,
   //----------------------------------------------------------------------------
   // STEP 2: Compute suffix arrays in parallel.
   //----------------------------------------------------------------------------
+  #ifdef USE_LIBSAIS
+  fprintf(stderr, "  Running libsais in parallel: ");
+  #else
   fprintf(stderr, "  Running divsufsort32 in parallel: ");
+  #endif
   start = utils::wclock();
   std::thread **threads = new std::thread*[n_blocks];
   for (long i = 0; i < n_blocks; ++i) {
@@ -255,7 +275,12 @@ void initial_partial_sufsort(unsigned char *text, long text_length,
     long block_beg = std::max(0L, block_end - max_block_size);
     long block_size = block_end - block_beg;
 
-    threads[i] = new std::thread(run_divsufsort<int>,
+    threads[i] = new std::thread(
+        #ifdef USE_LIBSAIS
+        run_sais<int>,
+        #else
+        run_divsufsort<int>,
+        #endif
         text + block_beg, temp_sa + block_beg, block_size);
   }
 
