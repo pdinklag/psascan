@@ -1,0 +1,2 @@
+add_executable(delete_sentinel_bytes main.cpp)
+set_target_properties(delete_sentinel_bytes PROPERTIES OUTPUT_NAME ${CMAKE_BINARY_DIR}/delete_sentinel_bytes)
